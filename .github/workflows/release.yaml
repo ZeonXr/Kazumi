@@ -179,7 +179,6 @@
             with:
               channel: stable
               flutter-version-file: pubspec.yaml
-              architecture: x64
               cache: true
             
           - name: Get Flutter dependencies

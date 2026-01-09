@@ -221,7 +221,6 @@
             with:
               channel: stable
               flutter-version-file: pubspec.yaml
-              architecture: x64
               cache: true
               
           - run: flutter pub get
