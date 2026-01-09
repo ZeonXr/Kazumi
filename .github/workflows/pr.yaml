@@ -198,6 +198,52 @@
           #     path: build/windows/msix_signed_output/*.msix
 
 
+      flutter-build-windows-arm64:
+        needs: changes
+        # Use same conditions as windows x64 build
+        if: ${{ github.event.inputs.run_windows || (! github.event.pull_request.draft && (needs.changes.outputs.windows || needs.changes.outputs.all)) }}
+        name: "Release for windows arm64"
+        runs-on: "windows-11-arm" 
+        permissions: write-all
+    
+        steps:
+          - name: Clone repository
+            uses: actions/checkout@v4
+
+          - run: choco install yq
+            
+          - name: Enable Git longpaths
+            run: git config --system core.longpaths true
+            
+          - name: Set up Flutter
+            uses: subosito/flutter-action@v2.16.0
+            with:
+              channel: stable
+              flutter-version-file: pubspec.yaml
+              architecture: x64
+              
+          - name: Set up Java
+            uses: actions/setup-java@v4
+            with:
+              distribution: 'temurin'
+              java-version: '18'
+              
+          - run: flutter pub get
+          
+          - name: Build Windows
+            run: flutter build windows --release
+            
+          - name: Package Windows ARM64 Release
+            run: |
+               Compress-Archive build/windows/*/runner/Release/* Kazumi_windows_arm64_canary.zip
+               
+          - name: Upload windows arm64 outputs
+            uses: actions/upload-artifact@v4
+            with:
+              name: windows_arm64_outputs
+              path: Kazumi_windows_arm64_canary.zip
+
+
       flutter-build-ios:
         needs: changes
         if: ${{ github.event.inputs.run_ios || (! github.event.pull_request.draft && (needs.changes.outputs.ios || needs.changes.outputs.all)) }}
