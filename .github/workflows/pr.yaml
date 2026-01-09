@@ -216,11 +216,10 @@
             run: git config --system core.longpaths true
             
           - name: Set up Flutter
-            uses: subosito/flutter-action@v2.16.0
+            uses: subosito/flutter-action@v2
             with:
               channel: stable
               flutter-version-file: pubspec.yaml
-              architecture: x64
               
           - name: Set up Java
             uses: actions/setup-java@v4
