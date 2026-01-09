@@ -65,6 +65,7 @@
         outputs:
           android: ${{ steps.filter.outputs.android }}
           windows: ${{ steps.filter.outputs.windows }}
+          windows_arm64: ${{ steps.filter.outputs.windows_arm64 }}
           ios: ${{ steps.filter.outputs.ios }}
           macos: ${{ steps.filter.outputs.macos }}
           linux: ${{ steps.filter.outputs.linux }}
@@ -79,6 +80,8 @@
                 android:
                   - 'android/**'
                 windows:
+                  - 'windows/**'
+                windows_arm64:
                   - 'windows/**'
                 ios:
                   - 'ios/**'
@@ -96,7 +99,7 @@
 
       flutter-build-android:
         needs: changes
-        if: ${{ github.event.inputs.run_android || (! github.event.pull_request.draft && (needs.changes.outputs.android || needs.changes.outputs.all)) }}
+        if: ${{ inputs.run_android || (! github.event.pull_request.draft && (needs.changes.outputs.android || needs.changes.outputs.all)) }}
         name: "Release for android"
         runs-on: "ubuntu-latest"
         permissions: write-all
@@ -136,7 +139,7 @@
 
       flutter-build-windows:
         needs: changes
-        if: ${{ github.event.inputs.run_windows || (! github.event.pull_request.draft && (needs.changes.outputs.windows || needs.changes.outputs.all)) }}
+        if: ${{ inputs.run_windows || (! github.event.pull_request.draft && (needs.changes.outputs.windows || needs.changes.outputs.all)) }}
         name: "Release for windows"
         runs-on: "windows-latest"
         permissions: write-all
@@ -199,7 +202,7 @@
       flutter-build-windows-arm64:
         needs: changes
         # Use same conditions as windows x64 build
-        if: ${{ github.event.inputs.run_windows_arm64 || (! github.event.pull_request.draft && (needs.changes.outputs.windows || needs.changes.outputs.all)) }}
+        if: ${{ inputs.run_windows_arm64 || (! github.event.pull_request.draft && (needs.changes.outputs.windows_arm64 || needs.changes.outputs.all)) }}
         name: "Release for windows arm64"
         runs-on: "windows-11-arm" 
         permissions: write-all
@@ -239,7 +242,7 @@
 
       flutter-build-ios:
         needs: changes
-        if: ${{ github.event.inputs.run_ios || (! github.event.pull_request.draft && (needs.changes.outputs.ios || needs.changes.outputs.all)) }}
+        if: ${{ inputs.run_ios || (! github.event.pull_request.draft && (needs.changes.outputs.ios || needs.changes.outputs.all)) }}
         name: "Release for iOS"
         runs-on: "macos-latest"
         permissions: write-all
@@ -270,7 +273,7 @@
 
       flutter-build-macos:
         needs: changes
-        if: ${{ github.event.inputs.run_macos || (! github.event.pull_request.draft && (needs.changes.outputs.macos || needs.changes.outputs.all)) }}
+        if: ${{ inputs.run_macos || (! github.event.pull_request.draft && (needs.changes.outputs.macos || needs.changes.outputs.all)) }}
         name: "Release for Macos"
         runs-on: "macos-latest"
         permissions: write-all
@@ -301,7 +304,7 @@
 
       flutter-build-linux:
         needs: changes
-        if: ${{ github.event.inputs.run_linux || (! github.event.pull_request.draft && (needs.changes.outputs.linux || needs.changes.outputs.all)) }}
+        if: ${{ inputs.run_linux || (! github.event.pull_request.draft && (needs.changes.outputs.linux || needs.changes.outputs.all)) }}
         name: "Release for Linux"
         runs-on: "ubuntu-latest" 
         permissions: write-all
