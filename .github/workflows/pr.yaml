@@ -35,6 +35,11 @@
             required: false
             default: false
             type: boolean
+          run_windows_arm64:
+            description: 'manually run windows arm64 build'
+            required: false
+            default: false
+            type: boolean
           run_ios:
             description: 'manually run ios build'
             required: false
@@ -102,12 +107,14 @@
             uses: actions/setup-java@v4
             with:
               java-version: '17'
-              distribution: 'temurin'          
+              distribution: 'temurin'
+              cache: 'gradle'
           - name: Set up Flutter
             uses: subosito/flutter-action@v2.16.0
             with:
               channel: stable
               flutter-version-file: pubspec.yaml
+              cache: true
           - name: Get Flutter dependencies
             run: flutter pub get
             shell: bash
@@ -145,6 +152,7 @@
             with:
               channel: stable
               flutter-version-file: pubspec.yaml
+              cache: true
           - run: flutter pub get
           - run: flutter build windows  
           - run: Compress-Archive build/windows/x64/runner/Release/* Kazumi_windows_canary.zip
@@ -191,7 +199,7 @@
       flutter-build-windows-arm64:
         needs: changes
         # Use same conditions as windows x64 build
-        if: ${{ github.event.inputs.run_windows || (! github.event.pull_request.draft && (needs.changes.outputs.windows || needs.changes.outputs.all)) }}
+        if: ${{ github.event.inputs.run_windows_arm64 || (! github.event.pull_request.draft && (needs.changes.outputs.windows || needs.changes.outputs.all)) }}
         name: "Release for windows arm64"
         runs-on: "windows-11-arm" 
         permissions: write-all
@@ -211,6 +219,7 @@
               channel: stable
               flutter-version-file: pubspec.yaml
               architecture: x64
+              cache: true
               
           - run: flutter pub get
           
@@ -243,6 +252,7 @@
             with:
               channel: stable
               flutter-version-file: pubspec.yaml
+              cache: true
           - run: flutter pub get
           - name: Build IPA
             run: |
@@ -272,6 +282,7 @@
             uses: subosito/flutter-action@v2.16.0
             with:
               channel: stable
+              cache: true
               flutter-version-file: pubspec.yaml
           - run: flutter pub get
           - run: flutter build macos --release
@@ -319,6 +330,7 @@
             uses: subosito/flutter-action@v2.16.0
             with:
               channel: stable
+              cache: true
               flutter-version-file: pubspec.yaml
           - name: Get Flutter dependencies
             run: flutter pub get
